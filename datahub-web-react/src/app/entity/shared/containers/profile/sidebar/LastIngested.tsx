@@ -47,6 +47,12 @@ const RelativeDescription = styled.div`
     margin-bottom: 5px;
 `;
 
+const TrustIndexRelativeDescription = styled.div`
+    margin-top: 5px
+    margin-bottom: 5px;
+    max-width: 400px;
+`;
+
 const SubText = styled.div`
     color: ${ANTD_GRAY[7]};
     font-size: 10px;
@@ -64,7 +70,17 @@ const HelpHeader = styled.div`
     max-width: 250px;
 `;
 
+const TrustIndexHeader = styled.div`
+    margin-bottom: 5px;
+    max-width: 400px;
+`;
+
 const LastIngestedWrapper = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const TrustIndexWrapper = styled.div`
     display: flex;
     align-items: center;
 `;
@@ -98,6 +114,21 @@ function TooltipContent() {
         </div>
     );
 }
+function TrustIndexTooltipContent() {
+    return (
+        <div>
+            <TooltipSection>
+                <StyledDot color={red[5]} /><b>Low&nbsp;</b> Trust Index&nbsp;(Trust Index is less than 50%)
+            </TooltipSection>
+            <TooltipSection>
+                <StyledDot color={orange[5]} /> <b>Moderate&nbsp;</b> Trust Index&nbsp;(Trust Index lies between 50% and 80%)
+            </TooltipSection>
+            <TooltipSection>
+                <StyledDot color={green[5]} /> <b>High&nbsp;</b> Trust Index&nbsp;(Trust Index is greater than or equal to 80%)
+            </TooltipSection>
+        </div>
+    );
+}
 
 export function getLastIngestedColor(lastIngested: number) {
     const lastIngestedDate = moment(lastIngested);
@@ -108,6 +139,30 @@ export function getLastIngestedColor(lastIngested: number) {
         return orange[5];
     }
     return red[5];
+}
+
+export function calculateTrustIndex(trust_index_number: number){
+    if (trust_index_number < 50) {
+        return "Dataset has Low Trust Index";
+    }
+    if (trust_index_number < 80 && trust_index_number >= 50) {
+        return "Dataset has Moderate Trust Index";
+    }
+    return "Dataset has High Trust Index";
+    
+};
+export function getTrustIndexColor(trust_index_number:number) {
+    
+    
+    if (trust_index_number < 50) {
+        return red[5];
+    }
+    if (trust_index_number < 80 && trust_index_number >= 50) {
+        return orange[5];
+    }
+    return green[5];
+    
+    
 }
 
 interface Props {
@@ -121,24 +176,32 @@ function LastIngested({ lastIngested }: Props) {
     const lastIngestedColor = getLastIngestedColor(lastIngested);
     const platformName = getPlatformName(entityData);
     const platformLogoUrl = entityData?.platform?.properties?.logoUrl;
+    const propertiesData = entityData?.customProperties;
+    console.log(entityData)
+    const trust_val = propertiesData?.find(i => i?.key === "trust_index");
+    const trust_index_value = (trust_val?.value)?.replace("%","")
+    let trust_index_number!: number;
+    if (trust_index_value !== undefined){
+        trust_index_number = parseFloat(trust_index_value);
+    }
+    const trustIndexColor=getTrustIndexColor(trust_index_number)
+    
 
     return (
-        <LastIngestedWrapper>
+        <><LastIngestedWrapper>
             <Popover
                 placement="left"
-                content={
-                    <PopoverContentWrapper>
-                        <Title>
-                            <StyledDot color={lastIngestedColor} />
-                            Last Synchronized
-                        </Title>
-                        <RelativeDescription>
-                            This {displayedEntityType.toLocaleLowerCase()} was last synchronized&nbsp;
-                            <b>{toRelativeTimeString(lastIngested)}</b>
-                        </RelativeDescription>
-                        <SubText>Synchronized on {toLocalDateTimeString(lastIngested)}</SubText>
-                    </PopoverContentWrapper>
-                }
+                content={<PopoverContentWrapper>
+                    <Title>
+                        <StyledDot color={lastIngestedColor} />
+                        Last Synchronized
+                    </Title>
+                    <RelativeDescription>
+                        This {displayedEntityType.toLocaleLowerCase()} was last synchronized&nbsp;
+                        <b>{toRelativeTimeString(lastIngested)}</b>
+                    </RelativeDescription>
+                    <SubText>Synchronized on {toLocalDateTimeString(lastIngested)}</SubText>
+                </PopoverContentWrapper>}
             >
                 <MainContent>
                     <StyledDot color={lastIngestedColor} />
@@ -147,30 +210,59 @@ function LastIngested({ lastIngested }: Props) {
                 </MainContent>
             </Popover>
             <Popover
-                title={
-                    <HelpHeader>
-                        This represents the time that the entity was last synchronized with&nbsp;
-                        {platformName ? (
-                            <strong>
-                                {platformLogoUrl && (
-                                    <>
-                                        <PreviewImage preview={false} src={platformLogoUrl} alt={platformName} />
-                                        &nbsp;
-                                    </>
-                                )}
-                                {platformName}
-                            </strong>
-                        ) : (
-                            <>the source platform</>
-                        )}
-                    </HelpHeader>
-                }
+                title={<HelpHeader>
+                    This represents the time that the entity was last synchronized with&nbsp;
+                    {platformName ? (
+                        <strong>
+                            {platformLogoUrl && (
+                                <>
+                                    <PreviewImage preview={false} src={platformLogoUrl} alt={platformName} />
+                                    &nbsp;
+                                </>
+                            )}
+                            {platformName}
+                        </strong>
+                    ) : (
+                        <>the source platform</>
+                    )}
+                </HelpHeader>}
                 content={TooltipContent}
                 placement="bottom"
             >
                 <HelpIcon />
             </Popover>
         </LastIngestedWrapper>
+        <TrustIndexWrapper>
+        <Popover
+                placement="left"
+                content={<PopoverContentWrapper>
+                    <Title>
+                        <StyledDot color={trustIndexColor} />
+                        Trust Index&nbsp;
+                    </Title>
+                    <TrustIndexRelativeDescription>
+                        This dataset has a trust index value of&nbsp;<b>{trust_index_value}%</b>, which is a metric representing the degree to which this dataset adheres to governance compliance&nbsp;
+                    </TrustIndexRelativeDescription>
+                    <SubText>{calculateTrustIndex(trust_index_number)}</SubText>
+                </PopoverContentWrapper>}
+            >
+                <MainContent>
+                    <StyledDot color={trustIndexColor} />
+                    Trust Index&nbsp;
+                    <b>{trust_index_value}%</b>
+                </MainContent>
+            </Popover>
+            <Popover
+                title={<TrustIndexHeader>
+                    This dataset has a trust index value of <b>{trust_index_value}%</b>, which is a metric representing the degree to which this dataset adheres to governance compliance&nbsp;
+                </TrustIndexHeader>}
+                content={TrustIndexTooltipContent}
+                placement="bottom"
+            >
+                <HelpIcon />
+            </Popover>
+        
+        </TrustIndexWrapper></>
     );
 }
 
