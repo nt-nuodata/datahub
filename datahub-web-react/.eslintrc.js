@@ -21,6 +21,8 @@ module.exports = {
     rules: {
         eqeqeq: ['error', 'always'],
         'react/destructuring-assignment': 'off',
+        'react/jsx-no-bind': 'off',
+        'react/no-unused-prop-types': 'off',
         'no-console': 'off',
         'no-debugger': 'warn',
         'require-await': 'warn',

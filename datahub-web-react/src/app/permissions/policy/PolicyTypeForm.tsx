@@ -53,7 +53,7 @@ export default function PolicyTypeForm({
                     <Select.Option value={PolicyType.Metadata}>Metadata</Select.Option>
                 </Select>
                 <TypeDescriptionParagraph type="secondary">
-                    The <b>Platform</b> policy type allows you to assign top-level DataHub Platform privileges to users.
+                    The <b>Platform</b> policy type allows you to assign top-level NuoData Platform privileges to users.
                     These include managing users and groups, creating policies, viewing analytics dashboards and more.
                     <br />
                     <br />

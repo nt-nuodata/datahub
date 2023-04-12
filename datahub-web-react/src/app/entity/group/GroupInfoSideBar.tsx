@@ -179,7 +179,7 @@ export default function GroupInfoSidebar({ sideBarData, refetch }: Props) {
                         <Col>
                             {isExternalGroup && (
                                 <Tooltip
-                                    title={`Membership for this group cannot be edited in DataHub as it originates from ${externalGroupType}.`}
+                                    title={`Membership for this group cannot be edited in NuoData as it originates from ${externalGroupType}.`}
                                 >
                                     <LockOutlined />
                                 </Tooltip>

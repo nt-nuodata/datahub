@@ -4,7 +4,7 @@ export const REDSHIFT_HOST_PORT: RecipeField = {
     name: 'host_port',
     label: 'Host and Port',
     tooltip:
-        "The host and port where Redshift is running. For example, 'redshift:5439'. Note: this host must be accessible on the network where DataHub is running (or allowed via an IP Allow List, AWS PrivateLink, etc).",
+        "The host and port where Redshift is running. For example, 'redshift:5439'. Note: this host must be accessible on the network where NuoData is running (or allowed via an IP Allow List, AWS PrivateLink, etc).",
     type: FieldType.TEXT,
     fieldPath: 'source.config.host_port',
     placeholder: 'redshift.company.us-west-1.redshift.amazonaws.com:5439',

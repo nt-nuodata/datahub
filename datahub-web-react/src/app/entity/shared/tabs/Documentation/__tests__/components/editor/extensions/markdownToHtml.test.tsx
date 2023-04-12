@@ -2,7 +2,7 @@ import { markdownToHtml } from '../../../../components/editor/extensions/markdow
 
 const cases = [
     [
-        'should parse datahub mentions',
+        'should parse NuoData mentions',
         'Lorem [@SampleHiveDataset](urn:li:dataset:(urn:li:dataPlatform:hive,SampleHiveDataset,PROD)) ipsum',
         '<p>Lorem <span data-datahub-mention-urn="urn:li:dataset:(urn:li:dataPlatform:hive,SampleHiveDataset,PROD)">@SampleHiveDataset</span> ipsum</p>\n',
     ],

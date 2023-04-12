@@ -166,7 +166,7 @@ export const AnalyticsPage = () => {
                 {chartError && <Alert type="error" message={chartError?.message || 'Charts failed to load'} />}
                 {!chartLoading &&
                     chartData?.getAnalyticsCharts
-                        ?.filter((chartGroup) => chartGroup.groupId === 'DataHubUsageAnalytics')
+                        ?.filter((chartGroup) => chartGroup.groupId === 'NuoDataUsageAnalytics')
                         .map((chartGroup) => (
                             <>
                                 <Divider />

@@ -12,14 +12,14 @@ export const GroupsOnboardingConfig: OnboardingStep[] = [
         content: (
             <Typography.Paragraph>
                 <p>
-                    Welcome to Datahub <strong>Groups</strong>!
+                    Welcome to NuoData <strong>Groups</strong>!
                 </p>
                 <p>
                     <strong>Groups</strong> are collections of users which can be used to assign ownership to assets and
                     manage access.
                 </p>
                 <p>
-                    <strong>Groups</strong> can be created natively within DataHub, or synced from your Identity
+                    <strong>Groups</strong> can be created natively within NuoData, or synced from your Identity
                     Provider.
                 </p>
                 <p>

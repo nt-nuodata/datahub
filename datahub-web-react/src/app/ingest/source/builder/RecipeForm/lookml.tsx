@@ -167,7 +167,7 @@ export const CONNECTION_TO_PLATFORM_MAP_NAME: RecipeField = {
 export const PLATFORM: RecipeField = {
     name: 'platform',
     label: 'Platform',
-    tooltip: 'The Data Platform ID in DataHub (e.g. snowflake, bigquery, redshift, mysql, postgres)',
+    tooltip: 'The Data Platform ID in NuoData (e.g. snowflake, bigquery, redshift, mysql, postgres)',
     type: FieldType.TEXT,
     fieldPath: 'platform',
     placeholder: 'snowflake',
@@ -190,7 +190,7 @@ export const CONNECTION_TO_PLATFORM_MAP: RecipeField = {
     name: 'connection_to_platform_map',
     label: 'Connection To Platform Map',
     tooltip:
-        'A mapping of Looker connection names to DataHub Data Platform and Database names. This is used to create an accurate picture of the Lineage between LookML models and upstream Data Sources.',
+        'A mapping of Looker connection names to NuoData Data Platform and Database names. This is used to create an accurate picture of the Lineage between LookML models and upstream Data Sources.',
     type: FieldType.DICT,
     buttonLabel: 'Add mapping',
     fieldPath: connectionToPlatformMapFieldPath,
