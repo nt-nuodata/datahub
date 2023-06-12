@@ -4,12 +4,12 @@ apply plugin: 'jacoco'
 
 tasks.withType(JavaCompile).configureEach {
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(7)
     }
 }
 tasks.withType(Test).configureEach {
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -24,7 +24,7 @@ dependencies {
 
   implementation project(path: ':li-utils')
   implementation project(path: ':metadata-models')
-  compile project(path: ':metadata-integration:java:datahub-client', configuration: 'shadow')
+ implementation project(path: ':metadata-integration:java:datahub-client', configuration: 'shadow')
   implementation externalDependency.httpAsyncClient
 
   // Tests need a concrete log4j available. Providing it here

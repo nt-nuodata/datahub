@@ -23,7 +23,7 @@ if (project.hasProperty('projVersion')) {
 
 
 dependencies {
-  compile spec.product.pegasus.data
+ implementation spec.product.pegasus.data
   // Uncomment these if you want to depend on models defined in core datahub
   //compile project(':li-utils')
   //dataModel project(':li-utils')
@@ -69,6 +69,12 @@ task modelDeploy(type: Copy) {
 
 modelDeploy.dependsOn modelArtifact
 
+task install(type: Copy) {
+    dependsOn modelDeploy
+    doLast {
+        println "exec install task"
+    }
+}
 install.dependsOn modelDeploy
 
 

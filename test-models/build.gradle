@@ -3,18 +3,18 @@ apply plugin: 'java'
 
 tasks.withType(JavaCompile).configureEach {
   javaCompiler = javaToolchains.compilerFor {
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 tasks.withType(Test).configureEach {
   javaLauncher = javaToolchains.launcherFor {
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
 dependencies {
-  compile spec.product.pegasus.data
-  compile externalDependency.commonsIo
+ implementation spec.product.pegasus.data
+ implementation externalDependency.commonsIo
   dataModel project(':metadata-models')
   dataModel project(':li-utils')
 }

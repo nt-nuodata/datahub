@@ -15,13 +15,13 @@ test {
 }
 
 jar {
-  archiveName = "$project.name-lib.jar"
+  archiveFileName = "$project.name-lib.jar"
 }
 
 shadowJar {
   zip64 true
   classifier = null
-  archiveName = "$project.name-${version}.jar"
+  archiveFileName = "$project.name-${archiveVersion}.jar"
   exclude "META-INF/*.RSA", "META-INF/*.SF","META-INF/*.DSA"
 }
 
@@ -30,12 +30,12 @@ dependencies() {
   implementation project(path: ':li-utils')
   implementation project(path: ':metadata-utils')
  
-  compile externalDependency.guava
-  compile externalDependency.lombok
+ implementation externalDependency.guava
+ implementation externalDependency.lombok
 
   annotationProcessor externalDependency.lombok
   
-  testCompile externalDependency.testng
+  testImplementation  externalDependency.testng
 }
 
 task sourcesJar(type: Jar) {

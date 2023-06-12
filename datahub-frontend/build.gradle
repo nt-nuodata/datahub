@@ -20,7 +20,7 @@ model {
 }
 
 task myTar(type: Tar) {
-  extension = "tgz"
+  archiveExtension = "tgz"
   compression = Compression.GZIP
 
   from("${buildDir}/stage")

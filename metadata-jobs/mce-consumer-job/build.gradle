@@ -28,15 +28,15 @@ dependencies {
     compileOnly externalDependency.lombok
     implementation externalDependency.logbackClassic
 
-    runtime externalDependency.mariadbConnector
-    runtime externalDependency.mysqlConnector
-    runtime externalDependency.postgresql
+   runtimeOnly externalDependency.mariadbConnector
+   runtimeOnly externalDependency.mysqlConnector
+   runtimeOnly externalDependency.postgresql
 
     annotationProcessor externalDependency.lombok
 
     testImplementation externalDependency.springBootTest
-    testCompile externalDependency.mockito
-    testCompile externalDependency.testng
+    testImplementation  externalDependency.mockito
+    testImplementation  externalDependency.testng
 }
 
 bootJar {

@@ -3,7 +3,7 @@ buildscript {
   // Releases: https://github.com/linkedin/rest.li/blob/master/CHANGELOG.md
   ext.pegasusVersion = '29.22.16'
   ext.mavenVersion = '3.6.3'
-  ext.springVersion = '5.3.27'
+  ext.springVersion = '6.0.0'
   ext.springBootVersion = '2.7.11'
   ext.openTelemetryVersion = '1.18.0'
   ext.neo4jVersion = '4.4.9'
@@ -31,7 +31,7 @@ buildscript {
     classpath 'org.springframework.boot:spring-boot-gradle-plugin:' + springBootVersion
     classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
     classpath "com.palantir.gradle.gitversion:gradle-git-version:0.12.3"
-    classpath "org.gradle.playframework:gradle-playframework:0.12"
+    classpath "org.gradle.playframework:gradle-playframework:0.13"
     classpath "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin:2.18.1"
   }
 }
@@ -233,7 +233,7 @@ configure(subprojects.findAll {! it.name.startsWith('spark-lineage')}) {
 
 subprojects {
 
-  apply plugin: 'maven'
+  apply plugin: 'maven-publish'
   apply plugin: 'com.gorylenko.gradle-git-properties'
 
   gitProperties {
@@ -247,7 +247,7 @@ subprojects {
 
   plugins.withType(JavaPlugin) {
     dependencies {
-      testCompile externalDependency.testng
+      testImplementation  externalDependency.testng
       constraints {
         implementation('io.netty:netty-all:4.1.86.Final')
         implementation('org.apache.commons:commons-compress:1.21')
@@ -275,21 +275,21 @@ subprojects {
 
   tasks.withType(JavaCompile).configureEach {
     javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(11)
+      languageVersion = JavaLanguageVersion.of(17)
     }
   }
   tasks.withType(Test).configureEach {
     javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(11)
+      languageVersion = JavaLanguageVersion.of(17)
     }
   }
 
-  afterEvaluate {
-    if (project.plugins.hasPlugin('pegasus')) {
-      dependencies {
-        dataTemplateCompile spec.product.pegasus.data
-        restClientCompile spec.product.pegasus.restliClient
-      }
-    }
-  }
+//  afterEvaluate {
+//    if (project.plugins.hasPlugin('pegasus')) {
+//      dependencies {
+//        dataTemplateCompile spec.product.pegasus.data
+//        restClientCompile spec.product.pegasus.restliClient
+//      }
+//    }
+//  }
 }

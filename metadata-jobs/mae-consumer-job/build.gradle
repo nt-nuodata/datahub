@@ -25,8 +25,8 @@ dependencies {
     implementation externalDependency.logbackClassic
 
     testImplementation externalDependency.springBootTest
-    testCompile externalDependency.mockito
-    testCompile externalDependency.testng
+    testImplementation  externalDependency.mockito
+    testImplementation  externalDependency.testng
 }
 
 bootJar {

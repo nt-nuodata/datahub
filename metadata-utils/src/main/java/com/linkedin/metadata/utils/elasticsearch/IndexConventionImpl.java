@@ -31,7 +31,7 @@ public class IndexConventionImpl implements IndexConvention {
         _prefix.map(p -> p + "_").orElse("") + "*" + TIMESERIES_ENTITY_INDEX_SUFFIX + "_" + TIMESERIES_INDEX_VERSION;
   }
 
-  private String createIndexName(String baseName) {
+  private String createIndexName(String archiveBaseName) {
     return (_prefix.map(prefix -> prefix + "_").orElse("") + baseName).toLowerCase();
   }
 

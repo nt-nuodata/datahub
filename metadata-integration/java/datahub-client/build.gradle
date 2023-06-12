@@ -16,12 +16,12 @@ jar.enabled = false // Since we only want to build shadow jars, disabling the re
 
 tasks.withType(JavaCompile).configureEach {
   javaCompiler = javaToolchains.compilerFor {
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 tasks.withType(Test).configureEach {
   javaLauncher = javaToolchains.launcherFor {
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -31,7 +31,7 @@ dependencies {
   implementation(externalDependency.kafkaAvroSerializer) {
     exclude group: "org.apache.avro"
   }
-  compile externalDependency.avro_1_7
+ implementation externalDependency.avro_1_7
   constraints {
     implementation('commons-collections:commons-collections:3.2.2') {
       because 'Vulnerability Issue'
@@ -48,12 +48,12 @@ dependencies {
   implementation externalDependency.slf4jApi
   compileOnly externalDependency.lombok
   annotationProcessor externalDependency.lombok
-  testCompile externalDependency.mockito
-  testCompile externalDependency.mockServer
-  testCompile externalDependency.mockServerClient
-  testCompile externalDependency.testContainers
-  testCompile externalDependency.httpAsyncClient
-  testRuntime externalDependency.logbackClassic
+  testImplementation  externalDependency.mockito
+  testImplementation  externalDependency.mockServer
+  testImplementation  externalDependency.mockServerClient
+  testImplementation  externalDependency.testContainers
+  testImplementation  externalDependency.httpAsyncClient
+   testRuntimeOnly externalDependency.logbackClassic
 
   swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.33'
 }

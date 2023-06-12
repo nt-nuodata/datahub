@@ -98,6 +98,12 @@ distZip {
   from 'dist'
 }
 
+//task distZip(type: Zip) {
+//  dependsOn 'yarnQuickBuild'
+//  archiveBaseName = 'datahub-web-react'
+//  from 'dist'
+//}
+
 task copyAssets(dependsOn: distZip) {
   doLast {
     copy {
