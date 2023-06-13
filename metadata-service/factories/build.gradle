@@ -18,11 +18,13 @@ dependencies {
  implementation externalDependency.elasticSearchRest
  implementation externalDependency.httpClient
  implementation externalDependency.gson
- implementation externalDependency.hazelcast
+ implementation (externalDependency.hazelcast) {
+  exclude group: 'org.json', module: 'json'
+ }
  implementation externalDependency.hazelcastSpring
  implementation externalDependency.kafkaClients
  implementation externalDependency.kafkaAvroSerde
-  compileOnly externalDependency.lombok
+  implementationOnly externalDependency.lombok
  implementation externalDependency.servletApi
  implementation externalDependency.springBeans
  implementation externalDependency.springBootAutoconfigure
@@ -44,7 +46,13 @@ dependencies {
   testImplementation  externalDependency.mockito
   testImplementation  externalDependency.testng
   testImplementation  externalDependency.hazelcastTest
+  implementation externalDependency.jline
+  implementation externalDependency.common
+}
 
+configurations.all{
+  exclude group: "commons-io", module:"commons-io"
+  exclude group: "jline", module:"jline"
 }
 
 processResources.configure {

@@ -13,8 +13,7 @@ from google.cloud.bigquery.table import TableListItem
 from datahub.configuration.pattern_utils import is_schema_allowed
 from datahub.emitter.mce_builder import (
     make_data_platform_urn,
-    make_dataplatform_instance_urn,
-    make_dataset_urn_with_platform_instance,
+    make_dataset_urn,
     make_tag_urn,
     set_dataset_urn_to_lower,
 )
@@ -30,15 +29,10 @@ from datahub.ingestion.api.decorators import (
 )
 from datahub.ingestion.api.source import (
     CapabilityReport,
+    MetadataWorkUnitProcessor,
     SourceCapability,
     TestableSource,
     TestConnectionReport,
-)
-from datahub.ingestion.api.source_helpers import (
-    auto_materialize_referenced_tags,
-    auto_stale_entity_removal,
-    auto_status_aspect,
-    auto_workunit_reporter,
 )
 from datahub.ingestion.api.workunit import MetadataWorkUnit
 from datahub.ingestion.source.bigquery_v2.bigquery_audit import (
@@ -80,9 +74,6 @@ from datahub.ingestion.source.state.profiling_state_handler import ProfilingHand
 from datahub.ingestion.source.state.redundant_run_skip_handler import (
     RedundantRunSkipHandler,
 )
-from datahub.ingestion.source.state.sql_common_state import (
-    BaseSQLAlchemyCheckpointState,
-)
 from datahub.ingestion.source.state.stale_entity_removal_handler import (
     StaleEntityRemovalHandler,
 )
@@ -114,7 +105,6 @@ from datahub.metadata.com.linkedin.pegasus2avro.schema import (
     TimeType,
 )
 from datahub.metadata.schema_classes import (
-    DataPlatformInstanceClass,
     DatasetLineageTypeClass,
     GlobalTagsClass,
     TagAssociationClass,
@@ -227,15 +217,6 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
         # For database, schema, tables, views, etc
         self.lineage_extractor = BigqueryLineageExtractor(config, self.report)
         self.usage_extractor = BigQueryUsageExtractor(config, self.report)
-
-        # Create and register the stateful ingestion use-case handler.
-        self.stale_entity_removal_handler = StaleEntityRemovalHandler(
-            source=self,
-            config=self.config,
-            state_type_class=BaseSQLAlchemyCheckpointState,
-            pipeline_name=self.ctx.pipeline_name,
-            run_id=self.ctx.run_id,
-        )
 
         self.domain_registry: Optional[DomainRegistry] = None
         if self.config.domain:
@@ -417,29 +398,11 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
             )
             return test_report
 
-    def get_dataplatform_instance_aspect(
-        self, dataset_urn: str
-    ) -> Optional[MetadataWorkUnit]:
-        # If we are a platform instance based source, emit the instance aspect
-        if self.config.platform_instance:
-            aspect = DataPlatformInstanceClass(
-                platform=make_data_platform_urn(self.platform),
-                instance=make_dataplatform_instance_urn(
-                    self.platform, self.config.platform_instance
-                ),
-            )
-            return MetadataChangeProposalWrapper(
-                entityUrn=dataset_urn, aspect=aspect
-            ).as_workunit()
-        else:
-            return None
-
     def gen_dataset_key(self, db_name: str, schema: str) -> PlatformKey:
         return BigQueryDatasetKey(
             project_id=db_name,
             dataset_id=schema,
             platform=self.platform,
-            instance=self.config.platform_instance,
             env=self.config.env,
             backcompat_env_as_instance=True,
         )
@@ -448,7 +411,6 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
         return ProjectIdKey(
             project_id=database,
             platform=self.platform,
-            instance=self.config.platform_instance,
             env=self.config.env,
             backcompat_env_as_instance=True,
         )
@@ -491,6 +453,14 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
             tags=tags_joined,
         )
 
+    def get_workunit_processors(self) -> List[Optional[MetadataWorkUnitProcessor]]:
+        return [
+            *super().get_workunit_processors(),
+            StaleEntityRemovalHandler.create(
+                self, self.config, self.ctx
+            ).workunit_processor,
+        ]
+
     def get_workunits_internal(self) -> Iterable[MetadataWorkUnit]:
         conn: bigquery.Client = get_bigquery_client(self.config)
         self.add_config_to_report()
@@ -500,8 +470,8 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
             return
 
         for project_id in projects:
-            logger.info(f"Processing project: {project_id.id}")
             self.report.set_ingestion_stage(project_id.id, "Metadata Extraction")
+            logger.info(f"Processing project: {project_id.id}")
             yield from self._process_project(conn, project_id)
 
         if self._should_ingest_usage():
@@ -513,17 +483,6 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
             for project in projects:
                 self.report.set_ingestion_stage(project.id, "Lineage Extraction")
                 yield from self.generate_lineage(project.id)
-
-    def get_workunits(self) -> Iterable[MetadataWorkUnit]:
-        return auto_materialize_referenced_tags(
-            auto_stale_entity_removal(
-                self.stale_entity_removal_handler,
-                auto_workunit_reporter(
-                    self.report,
-                    auto_status_aspect(self.get_workunits_internal()),
-                ),
-            )
-        )
 
     def _should_ingest_usage(self) -> bool:
         if not self.config.include_usage_statistics:
@@ -1028,9 +987,6 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
             dataset_urn=dataset_urn,
             parent_container_key=self.gen_dataset_key(project_id, dataset_name),
         )
-        dpi_aspect = self.get_dataplatform_instance_aspect(dataset_urn=dataset_urn)
-        if dpi_aspect:
-            yield dpi_aspect
 
         subTypes = SubTypes(typeNames=sub_types)
         yield MetadataChangeProposalWrapper(
@@ -1088,10 +1044,9 @@ class BigqueryV2Source(StatefulIngestionSourceBase, TestableSource):
 
     def gen_dataset_urn(self, project_id: str, dataset_name: str, table: str) -> str:
         datahub_dataset_name = BigqueryTableIdentifier(project_id, dataset_name, table)
-        dataset_urn = make_dataset_urn_with_platform_instance(
+        dataset_urn = make_dataset_urn(
             self.platform,
             str(datahub_dataset_name),
-            self.config.platform_instance,
             self.config.env,
         )
         return dataset_urn

@@ -149,6 +149,7 @@ module.exports = {
           Authentication: [
             "docs/authentication/README",
             "docs/authentication/concepts",
+            "docs/authentication/changing-default-credentials",
             "docs/authentication/guides/add-users",
             {
               "Frontend Authentication": [
@@ -188,6 +189,7 @@ module.exports = {
             "docs/how/kafka-config",
             "docs/deploy/confluent-cloud",
             "docs/advanced/no-code-upgrade",
+            "docs/how/jattach-guide",
           ],
         },
         "docs/how/updating-datahub",
@@ -381,6 +383,7 @@ module.exports = {
         "docs/dataproducts",
         "docs/glossary/business-glossary",
         "docs/tags",
+        "docs/ownership/ownership-types",
         "docs/browse",
         "docs/authorization/access-policies-guide",
         "docs/features/dataset-usage-and-query-history",
@@ -549,6 +552,7 @@ module.exports = {
         },
         {
           "Managed DataHub Release History": [
+            "docs/managed-datahub/release-notes/v_0_2_8",
             "docs/managed-datahub/release-notes/v_0_2_7",
             "docs/managed-datahub/release-notes/v_0_2_6",
             "docs/managed-datahub/release-notes/v_0_2_5",

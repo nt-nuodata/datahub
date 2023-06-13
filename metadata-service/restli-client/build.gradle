@@ -11,5 +11,8 @@ dependencies {
   compileOnly externalDependency.lombok
   annotationProcessor externalDependency.lombok
 
- implementation spec.product.pegasus.restliClient
+  implementation spec.product.pegasus.restliClient
+
+  testImplementation externalDependency.mockito
+  testImplementation externalDependency.testng
 }
