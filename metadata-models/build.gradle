@@ -2,26 +2,23 @@ import io.datahubproject.GenerateJsonSchemaTask
 
 
 apply plugin: 'pegasus'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
 
-tasks.withType(JavaCompile).configureEach {
-  javaCompiler = javaToolchains.compilerFor {
-    languageVersion = JavaLanguageVersion.of(17)
-  }
-}
-tasks.withType(Test).configureEach {
-  javaLauncher = javaToolchains.launcherFor {
-    languageVersion = JavaLanguageVersion.of(17)
-  }
-}
+tasks.withType(JavaCompile)
+tasks.withType(Test)
 
 dependencies {
- implementation spec.product.pegasus.data 
+    implementation spec.product.pegasus.data
     constraints {
-      implementation('org.apache.commons:commons-text:1.10.0') {
+        implementation('org.apache.commons:commons-text:1.10.0') {
         because 'Vulnerability Issue'
       }
     }
- implementation project(':li-utils')
+    implementation project(':li-utils')
   dataModel project(':li-utils')
 
   testImplementation  externalDependency.guava

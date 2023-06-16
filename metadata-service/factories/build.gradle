@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply from: "../../gradle/versioning/versioning.gradle"
 
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
  implementation externalDependency.hazelcastSpring
  implementation externalDependency.kafkaClients
  implementation externalDependency.kafkaAvroSerde
-  implementationOnly externalDependency.lombok
+  implementation externalDependency.lombok
  implementation externalDependency.servletApi
  implementation externalDependency.springBeans
  implementation externalDependency.springBootAutoconfigure

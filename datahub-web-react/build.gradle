@@ -1,5 +1,5 @@
 plugins {
-  id 'java'
+  id  'java-library'
 }
 apply plugin: 'distribution'
 apply plugin: 'com.github.node-gradle.node'

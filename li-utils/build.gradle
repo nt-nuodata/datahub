@@ -1,16 +1,13 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'pegasus'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
 
-tasks.withType(JavaCompile).configureEach {
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-tasks.withType(Test).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
+tasks.withType(JavaCompile)
+tasks.withType(Test)
 
 dependencies {
    implementation spec.product.pegasus.data
@@ -21,7 +18,7 @@ dependencies {
    implementation externalDependency.guava
 
     implementation externalDependency.slf4jApi
-    compileOnly externalDependency.lombok
+    implementation externalDependency.lombok
     annotationProcessor externalDependency.lombok
 
     testImplementation  externalDependency.assertJ

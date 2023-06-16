@@ -1,20 +1,17 @@
 apply plugin: 'pegasus'
-apply plugin: 'java'
+apply plugin: 'java-library'
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
+  }
+}
 
-tasks.withType(JavaCompile).configureEach {
-  javaCompiler = javaToolchains.compilerFor {
-    languageVersion = JavaLanguageVersion.of(17)
-  }
-}
-tasks.withType(Test).configureEach {
-  javaLauncher = javaToolchains.launcherFor {
-    languageVersion = JavaLanguageVersion.of(17)
-  }
-}
+tasks.withType(JavaCompile)
+tasks.withType(Test)
 
 dependencies {
- implementation spec.product.pegasus.data
- implementation externalDependency.commonsIo
+    implementation spec.product.pegasus.data
+    implementation externalDependency.commonsIo
   dataModel project(':metadata-models')
   dataModel project(':li-utils')
 }

@@ -1,6 +1,6 @@
 plugins {
     id 'com.palantir.docker'
-    id 'java' // required for versioning
+    id  'java-library' // required for versioning
 }
 
 apply from: "../../gradle/versioning/versioning.gradle"

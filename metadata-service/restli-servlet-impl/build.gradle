@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'pegasus'
 
 sourceSets {
@@ -11,13 +11,13 @@ sourceSets {
 idea {
   module {
     testSourceDirs += file('src/integTest/java')
-    scopes.TEST.plus += [ configurations.integTestImplementation    ]
+    scopes.TEST.plus += [configurations.integTestImplementation]
   }
 }
 
 
 configurations {
-  integTestImplementation  .extendsFrom implementation
+  integTestImplementation.extendsFrom implementation
   integTestRuntimeOnly.extendsFrom runtimeOnly
   modelValidation
 }
@@ -54,11 +54,11 @@ dependencies {
   testImplementation  externalDependency.mockito
   testImplementation  externalDependency.testng
 
-  integTestImplementation   externalDependency.junitJupiterApi
+  integTestImplementation externalDependency.junitJupiterApi
   integTestRuntimeOnly externalDependency.junitJupiterEngine
 
-  integTestImplementation    externalDependency.junitJupiterApi
-  integTestImplementation    externalDependency.junitJupiterParams
+  integTestImplementation externalDependency.junitJupiterApi
+  integTestImplementation externalDependency.junitJupiterParams
 
   modelValidation project(path: ':metadata-models-validator')
   dataModel project(path: ':metadata-models', configuration: 'dataTemplate')
