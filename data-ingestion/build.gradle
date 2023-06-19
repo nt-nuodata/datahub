@@ -1,0 +1,26 @@
+plugins {
+    id 'base'
+}
+
+ext {
+    python_executable = 'python3'
+    venv_name = 'venv'
+}
+
+task environmentSetup(type: Exec) {
+//    inputs.file file('setup.py')
+//    outputs.dir("${venv_name}")
+    inputs.file file('setup.py')
+    outputs.dir("${venv_name}")
+    commandLine 'bash', '-c', "${python_executable} -m venv ${venv_name} && ${venv_name}/bin/python -m pip install --upgrade pip wheel setuptools>=63.0.0"
+}
+
+task installPackage(type: Exec, dependsOn: environmentSetup) {
+    inputs.file file('setup.py')
+    outputs.dir("${venv_name}")
+    commandLine 'bash', '-x', '-c', "${venv_name}/bin/pip install -e ."
+}
+
+//task checkSpark(type: Exec, dependsOn: installPackage) {
+//    commandLine 'bash', '-x', '-c', "python test.py"
+//}
